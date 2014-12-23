@@ -26,6 +26,10 @@ class Sphere : public Object
             t = (t0 < 0) ? t1 : t0;
             return true;
         }
+
+        void print(){
+            cout<<"radius : "<<radius<<endl;
+        }
 };
 
 

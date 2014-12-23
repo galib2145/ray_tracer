@@ -16,6 +16,10 @@ class Object
         virtual bool intersect(Ray ray, float t){
             return true;
         }
+
+        virtual void print(){
+            cout<<"You suck!"<<endl;
+        }
 };
 
 
