@@ -1,0 +1,63 @@
+# depslib dependency file v1.0
+1418437401 source:/home/galib2145/cpp/application/trial/main.cpp
+	<iostream>
+	<cstring>
+	<Vec3.h>
+	<cmath>
+	<Mat4.h>
+	<Ray.h>
+	<fstream>
+	<Object.h>
+	<Sphere.h>
+	<Camera.h>
+	<vector>
+
+1415754354 /home/galib2145/cpp/application/trial/include/Vec3.h
+	<iostream>
+	<cmath>
+
+1416588673 /home/galib2145/cpp/application/trial/include/Mat4.h
+	<iostream>
+
+1415782858 /home/galib2145/cpp/application/trial/include/Ray.h
+	<limits>
+	<iostream>
+
+1416588617 /home/galib2145/cpp/application/trial/include/Sphere.h
+
+1418437549 /home/galib2145/cpp/application/trial/include/Object.h
+	<stdlib.h>
+
+1416586119 /home/galib2145/cpp/application/trial/include/Camera.h
+
+1419245029 source:/home/galib/Downloads/trial/main.cpp
+	<iostream>
+	<cstring>
+	<Vec3.h>
+	<cmath>
+	<Mat4.h>
+	<Ray.h>
+	<fstream>
+	<Object.h>
+	<Sphere.h>
+	<Camera.h>
+	<vector>
+
+1419244681 /home/galib/Downloads/trial/include/Vec3.h
+	<iostream>
+	<cmath>
+
+1419245135 /home/galib/Downloads/trial/include/Mat4.h
+	<iostream>
+
+1419244796 /home/galib/Downloads/trial/include/Ray.h
+	<limits>
+	<iostream>
+
+1419309478 /home/galib/Downloads/trial/include/Object.h
+	<stdlib.h>
+
+1419309344 /home/galib/Downloads/trial/include/Sphere.h
+
+1419245299 /home/galib/Downloads/trial/include/Camera.h
+
