@@ -56,6 +56,9 @@ Vec3 trace(vector<Object> scene, Ray ray, Vec3 background_color){
     return background_color;
 }
 
+void add(){
+}
+
 void render(RenderContext context){
     char *buffer = new char[context.image_width * context.image_height * 3];
     char *pix = buffer;
