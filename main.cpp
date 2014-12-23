@@ -20,11 +20,12 @@ class RenderContext{
         Vec3 background_color;
         vector<Object> scene;
 
-        RenderContext(float width, float height, float fov){
+        RenderContext(float width, float height, float fov, vector<Object> scene){
             image_height = height;
             image_width = width;
             aspect_ratio = (float)image_width/image_height;
-            background_color = Vec3(0.2, 0.3, 0.5);
+            background_color = Vec3(0.6, 0.5, 0.3);
+            this->scene = scene;
         }
 
         void add_object_to_scene(Object object){
@@ -60,7 +61,7 @@ void render(RenderContext context){
     char *buffer = new char[context.image_width * context.image_height * 3];
     char *pix = buffer;
     memset(buffer, 0x0, sizeof(char) * context.image_width * context.image_height);
-    Sphere sphere(Vec3(0,0,-10),5);
+    Sphere sphere(Vec3(0,0,-10),5,Vec3(.2,.2,.5));
     Vec3 ray_origin;
 
     for(int j=0;j<context.image_height;++j){
@@ -71,18 +72,10 @@ void render(RenderContext context){
             ray_direction.normalize();
             float t;
             Ray ray(ray_origin, ray_direction);
-
-            bool intersects = sphere.intersect(ray,t);
-            if(!intersects){
-                pix[0] = (unsigned char)(255);
-                pix[1] = (unsigned char)(255);
-                pix[2] = (unsigned char)(255);
-            }
-            else{
-                pix[0] = (unsigned char)(255 * sphere.color.x);
-                pix[1] = (unsigned char)(255 * sphere.color.y);
-                pix[2] = (unsigned char)(255 * sphere.color.z);
-            }
+            Vec3 color = trace(context.scene, ray, context.background_color);
+            pix[0] = (unsigned char)(255 * color.x);
+            pix[1] = (unsigned char)(255 * color.y);
+            pix[2] = (unsigned char)(255 * color.z);
         }
 
     }
@@ -97,7 +90,10 @@ void render(RenderContext context){
 
 int main()
 {
-    RenderContext rc(1920,1080,60);
+    vector<Object> scene;
+    Sphere sphere_one(Vec3(0,0,-10),2,Vec3(1,1,1));
+    scene.push_back(sphere_one);
+    RenderContext rc(1920,1080,60,scene);
     render(rc);
 
     cout<<"Hello!"<<endl;

@@ -4,7 +4,7 @@ class Sphere : public Object
         Vec3 center;
         float radius,radius2;
 
-        Sphere(Vec3 center, float radius, Mat4 object_to_world_matrix = Mat4::Identity) : Object(object_to_world_matrix)
+        Sphere(Vec3 center, float radius, Vec3 color, Mat4 object_to_world_matrix = Mat4::Identity) : Object(object_to_world_matrix,color)
         {
             this->center = object_to_world_matrix.multiply_vector_by_matrix(center);
             this->radius = radius;
