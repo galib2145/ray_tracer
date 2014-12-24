@@ -30,22 +30,15 @@ class RenderContext{
         float aspect_ratio;
         Vec3 background_color;
         vector<Sphere> objects;
-        vector<Light_source> light_sources;
+        Light_source *light_source;
 
-        RenderContext(float width, float height, float fov, vector<Sphere> objects, vector<Light_source> light_sources){
+        RenderContext(float width, float height, float fov, vector<Sphere> objects, Light_source light_source){
             image_height = height;
             image_width = width;
             aspect_ratio = (float)image_width/image_height;
             background_color = Vec3(1, 1, 1);
             this->objects = objects;
-            this->light_sources = light_sources;
-        }
-
-        void print_objects_info(){
-            for (std::vector<Sphere>::iterator it = objects.begin() ; it != objects.end(); ++it){
-                Sphere object = *it;
-                object.print();
-            }
+            this->light_source = &light_source;
         }
 
         void add_object_to_objects(Sphere object){
@@ -53,7 +46,7 @@ class RenderContext{
         }
 };
 
-Vec3 trace(vector<Sphere> objects, vector<Light_source> light_sources, Ray ray, Vec3 background_color){
+Vec3 trace(vector<Sphere> objects, Light_source light_source, Ray ray, Vec3 background_color){
     Sphere object_closest_hit(Vec3(0,0,-10),5,Vec3(.2,.2,.5));
     bool if_hit = false;
     float t_closest_hit = 1000;
@@ -71,6 +64,7 @@ Vec3 trace(vector<Sphere> objects, vector<Light_source> light_sources, Ray ray, 
     }
 
     if(if_hit){
+        Vec3 closest_hit_point = ray.get_point(t_closest_hit);
         return (object_closest_hit).color;
     }
 
@@ -78,7 +72,6 @@ Vec3 trace(vector<Sphere> objects, vector<Light_source> light_sources, Ray ray, 
 }
 
 void render(RenderContext context){
-    context.print_objects_info();
     char *buffer = new char[context.image_width * context.image_height * 3];
     char *pix = buffer;
     memset(buffer, 0x0, sizeof(char) * context.image_width * context.image_height);
@@ -92,7 +85,7 @@ void render(RenderContext context){
             ray_direction.normalize();
             float t;
             Ray ray(ray_origin, ray_direction);
-            Vec3 color = trace(context.objects, context.light_sources, ray, context.background_color);
+            Vec3 color = trace(context.objects, *(context.light_source), ray, context.background_color);
             pix[0] = (unsigned char)(255 * color.x);
             pix[1] = (unsigned char)(255 * color.y);
             pix[2] = (unsigned char)(255 * color.z);
@@ -111,9 +104,7 @@ void render(RenderContext context){
 int main()
 {
     vector<Sphere> objects;
-    vector<Light_source> light_sources;
-    Light_source light_source_one = Light_source(Vec3(0,4,0),Vec3(0.2,0.5,0.6));
-    light_sources.push_back(light_source_one);
+    Light_source light_source_one = Light_source(Vec3(0,8,0),Vec3(0.7,0.6,0.6));
     Sphere sphere_one(Vec3(0, -10004, -20),10000,Vec3(.2,.2,.2));
     Sphere sphere_two(Vec3(0, 0, -20),4,Vec3(1,.32,.36));
     Sphere sphere_three(Vec3(5, -1, -15),2,Vec3(.90,.76,.46));
@@ -125,7 +116,7 @@ int main()
     objects.push_back(sphere_four);
     objects.push_back(sphere_five);
     cout<<objects.size()<<endl;
-    RenderContext rc(640,480,60,objects,light_sources);
+    RenderContext rc(640,480,60,objects,light_source_one);
     render(rc);
 
     cout<<"Hello me!"<<endl;
