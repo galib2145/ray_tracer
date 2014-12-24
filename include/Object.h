@@ -18,7 +18,6 @@ class Object
         }
 
         virtual void print(){
-            cout<<"You suck!"<<endl;
         }
 };
 

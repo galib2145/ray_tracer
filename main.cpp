@@ -12,42 +12,55 @@
 
 using namespace std;
 
+class Light_source{
+    public:
+        Vec3 position;
+        Vec3 color;
+
+        Light_source(Vec3 position, Vec3 color){
+            this->position = position;
+            this->color = color;
+        }
+};
+
 class RenderContext{
     public:
         Camera camera;
         int image_width, image_height;
         float aspect_ratio;
         Vec3 background_color;
-        vector<Sphere> scene;
+        vector<Sphere> objects;
+        vector<Light_source> light_sources;
 
-        RenderContext(float width, float height, float fov, vector<Sphere> scene){
+        RenderContext(float width, float height, float fov, vector<Sphere> objects, vector<Light_source> light_sources){
             image_height = height;
             image_width = width;
             aspect_ratio = (float)image_width/image_height;
             background_color = Vec3(1, 1, 1);
-            this->scene = scene;
+            this->objects = objects;
+            this->light_sources = light_sources;
         }
 
-        void print_scene_info(){
-            for (std::vector<Sphere>::iterator it = scene.begin() ; it != scene.end(); ++it){
+        void print_objects_info(){
+            for (std::vector<Sphere>::iterator it = objects.begin() ; it != objects.end(); ++it){
                 Sphere object = *it;
                 object.print();
             }
         }
 
-        void add_object_to_scene(Sphere object){
-            scene.push_back(object);
+        void add_object_to_objects(Sphere object){
+            objects.push_back(object);
         }
 };
 
-Vec3 trace(vector<Sphere> scene, Ray ray, Vec3 background_color){
+Vec3 trace(vector<Sphere> objects, vector<Light_source> light_sources, Ray ray, Vec3 background_color){
     Sphere object_closest_hit(Vec3(0,0,-10),5,Vec3(.2,.2,.5));
     bool if_hit = false;
     float t_closest_hit = 1000;
     float t_hit;
 
-    for (int i=0; i<scene.size();i++){
-        Sphere object = scene[i];
+    for (int i=0; i<objects.size();i++){
+        Sphere object = objects[i];
         if(object.intersect(ray,t_hit)){
             if(t_hit<t_closest_hit){
                 if_hit = true;
@@ -65,7 +78,7 @@ Vec3 trace(vector<Sphere> scene, Ray ray, Vec3 background_color){
 }
 
 void render(RenderContext context){
-    context.print_scene_info();
+    context.print_objects_info();
     char *buffer = new char[context.image_width * context.image_height * 3];
     char *pix = buffer;
     memset(buffer, 0x0, sizeof(char) * context.image_width * context.image_height);
@@ -79,7 +92,7 @@ void render(RenderContext context){
             ray_direction.normalize();
             float t;
             Ray ray(ray_origin, ray_direction);
-            Vec3 color = trace(context.scene, ray, context.background_color);
+            Vec3 color = trace(context.objects, context.light_sources, ray, context.background_color);
             pix[0] = (unsigned char)(255 * color.x);
             pix[1] = (unsigned char)(255 * color.y);
             pix[2] = (unsigned char)(255 * color.z);
@@ -97,19 +110,22 @@ void render(RenderContext context){
 
 int main()
 {
-    vector<Sphere> scene;
+    vector<Sphere> objects;
+    vector<Light_source> light_sources;
+    Light_source light_source_one = Light_source(Vec3(0,4,0),Vec3(0.2,0.5,0.6));
+    light_sources.push_back(light_source_one);
     Sphere sphere_one(Vec3(0, -10004, -20),10000,Vec3(.2,.2,.2));
     Sphere sphere_two(Vec3(0, 0, -20),4,Vec3(1,.32,.36));
     Sphere sphere_three(Vec3(5, -1, -15),2,Vec3(.90,.76,.46));
     Sphere sphere_four(Vec3(5, 0, -25),3,Vec3(.65,.77,.97));
     Sphere sphere_five(Vec3(5, -1, -15),2,Vec3(.90,.76,.46));
-    scene.push_back(sphere_one);
-    scene.push_back(sphere_two);
-    scene.push_back(sphere_three);
-    scene.push_back(sphere_four);
-    scene.push_back(sphere_five);
-    cout<<scene.size()<<endl;
-    RenderContext rc(640,480,60,scene);
+    objects.push_back(sphere_one);
+    objects.push_back(sphere_two);
+    objects.push_back(sphere_three);
+    objects.push_back(sphere_four);
+    objects.push_back(sphere_five);
+    cout<<objects.size()<<endl;
+    RenderContext rc(640,480,60,objects,light_sources);
     render(rc);
 
     cout<<"Hello me!"<<endl;
