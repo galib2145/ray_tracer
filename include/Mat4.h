@@ -1,4 +1,7 @@
 #include <iostream>
+#include <math.h>
+
+#define PI 3.1415196
 
 class Mat4
 {
@@ -26,13 +29,17 @@ class Mat4
             m[3][3] = 1.0;
         }
 
-        void input_matrix(){
-            std::cout<<"enter the matrix:"<<std::endl;
-            for(int i=0;i<4;i++){
-                for(int j=0;j<4;j++){
-                    std::cin>>m[i][j];
-                }
-            }
+        Mat4 operator * (const Mat4 right) const
+        {
+            Mat4 r;
+            for (int i = 0; i < 4; ++i)
+                for (int j = 0; j < 4; ++j)
+                    r.m[i][j] =
+                        m[i][0] * right.m[0][j] +
+                        m[i][1] * right.m[1][j] +
+                        m[i][2] * right.m[2][j] +
+                        m[i][3] * right.m[3][j];
+            return r;
         }
 
         void scale(float scale_factor){
@@ -155,16 +162,36 @@ class Mat4
             return s;
         }
 
-        void print_matrix(){
-            std::cout<<"the matrix is:"<<std::endl;
-            for(int i=0;i<4;i++){
-                for(int j=0;j<4;j++){
-                    std::cout<<m[i][j]<<" ";
-                }
-                std::cout<<"\n";
-            }
-
+        void rotateX(float angle){
+            Mat4 matrix;
+            float theta = (PI*angle)/180;
+            matrix.m[1][1] = cos(theta);
+            matrix.m[1][2] = -sin(theta);
+            matrix.m[2][1] = sin(theta);
+            matrix.m[2][2] = cos(theta);
+            *(this) = *(this) * matrix;
         }
+
+        void rotateY(float angle){
+            Mat4 matrix;
+            float theta = (PI*angle)/180;
+            matrix.m[0][0] = cos(theta);
+            matrix.m[0][2] = sin(theta);
+            matrix.m[2][0] = -sin(theta);
+            matrix.m[2][2] = cos(theta);
+            *(this) = *(this) * matrix;
+        }
+
+        void rotateZ(float angle){
+            Mat4 matrix;
+            float theta = (PI*angle)/180;
+            matrix.m[0][0] = cos(theta);
+            matrix.m[0][1] = -sin(theta);
+            matrix.m[1][0] = sin(theta);
+            matrix.m[1][1] = cos(theta);
+            *(this) = *(this) * matrix;
+        }
+
 };
 
 const Mat4 Mat4::Identity;

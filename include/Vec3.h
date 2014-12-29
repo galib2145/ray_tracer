@@ -17,6 +17,12 @@ class Vec3
             z=0.0;
         }
 
+        Vec3(float xx){
+            x=xx;
+            y=xx;
+            z=xx;
+        }
+
         float dot(Vec3 v){
             return x*v.x + y*v.y + z*v.z;
         }

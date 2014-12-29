@@ -10,6 +10,8 @@
 #include <Camera.h>
 #include <vector>
 
+#define MAX_RAY_DEPTH 5
+
 using namespace std;
 
 class Light_source{
@@ -36,7 +38,7 @@ class RenderContext{
             image_height = height;
             image_width = width;
             aspect_ratio = (float)image_width/image_height;
-            background_color = Vec3(1, 1, 1);
+            background_color = Vec3(.39, .58, .93);
             this->objects = objects;
             this->light_source = &light_source;
         }
@@ -46,8 +48,8 @@ class RenderContext{
         }
 };
 
-Vec3 trace(vector<Sphere> objects, Light_source light_source, Ray ray, Vec3 background_color){
-    Sphere object_closest_hit(Vec3(0,0,-10),5,Vec3(.2,.2,.5));
+Vec3 trace(vector<Sphere> objects, Light_source light_source, Ray ray, Vec3 background_color, int depth){
+    Sphere object_closest_hit(Vec3(0,0,-10),5,Vec3(.2,.2,.5),.4); //Dummy sphere
     bool if_hit = false;
     float t_closest_hit = 1000;
     float t_hit;
@@ -65,7 +67,25 @@ Vec3 trace(vector<Sphere> objects, Light_source light_source, Ray ray, Vec3 back
 
     if(if_hit){
         Vec3 closest_hit_point = ray.get_point(t_closest_hit);
-        return (object_closest_hit).color;
+        Vec3 normal_at_hit = closest_hit_point - object_closest_hit.center;
+        normal_at_hit.normalize();
+
+        Vec3 light_direction = light_source.position - closest_hit_point;
+        light_direction.normalize();
+        float diffused_cos_component = light_direction.dot(normal_at_hit);
+        if(diffused_cos_component<0) diffused_cos_component = 0;
+        Vec3 diffused_color_component = (object_closest_hit).color * diffused_cos_component;
+
+        Vec3 viewing_direction =  ray.origin - closest_hit_point;
+        Vec3 reflection_direction = (normal_at_hit * (normal_at_hit.dot(light_direction))) * 2.0 - light_direction;
+        viewing_direction.normalize();
+        reflection_direction.normalize();
+        float cos_theta = reflection_direction.dot(viewing_direction);
+        if(cos_theta<0) cos_theta = 0;
+        float spec_float = pow(cos_theta,50);
+        Vec3 specular_color(spec_float);
+
+        return diffused_color_component * .5 + specular_color * .5;
     }
 
     return background_color;
@@ -81,11 +101,11 @@ void render(RenderContext context){
         for(int i=0;i<context.image_width;i++,pix+=3){
             float x_remapped = (2 * (i + 0.5) / context.image_width - 1) * context.camera.fov_range * context.aspect_ratio;
             float y_remapped = (1 - 2 * (j + 0.5) / context.image_height) * context.camera.fov_range * context.aspect_ratio;
-            Vec3 ray_direction = context.camera.world_to_camera_matrix.mulitply_direction_by_matrix(Vec3(x_remapped,y_remapped,-3));
+            Vec3 ray_direction = context.camera.world_to_camera_matrix.mulitply_direction_by_matrix(Vec3(x_remapped,y_remapped,-4));
             ray_direction.normalize();
             float t;
             Ray ray(ray_origin, ray_direction);
-            Vec3 color = trace(context.objects, *(context.light_source), ray, context.background_color);
+            Vec3 color = trace(context.objects, *(context.light_source), ray, context.background_color, 0);
             pix[0] = (unsigned char)(255 * color.x);
             pix[1] = (unsigned char)(255 * color.y);
             pix[2] = (unsigned char)(255 * color.z);
@@ -104,19 +124,17 @@ void render(RenderContext context){
 int main()
 {
     vector<Sphere> objects;
-    Light_source light_source_one = Light_source(Vec3(0,8,0),Vec3(0.7,0.6,0.6));
-    Sphere sphere_one(Vec3(0, -10004, -20),10000,Vec3(.2,.2,.2));
-    Sphere sphere_two(Vec3(0, 0, -20),4,Vec3(1,.32,.36));
-    Sphere sphere_three(Vec3(5, -1, -15),2,Vec3(.90,.76,.46));
-    Sphere sphere_four(Vec3(5, 0, -25),3,Vec3(.65,.77,.97));
-    Sphere sphere_five(Vec3(5, -1, -15),2,Vec3(.90,.76,.46));
-    objects.push_back(sphere_one);
+    Light_source light_source_one = Light_source(Vec3(-70,70,70),Vec3(1,0,0));
+    Sphere sphere_two(Vec3(0, 0, -20),4,Vec3(1,.32,.36),0);
     objects.push_back(sphere_two);
+    Sphere sphere_three(Vec3(5, -1, -15),2,Vec3(.90,.76,.46),0);
     objects.push_back(sphere_three);
+    Sphere sphere_four(Vec3(5, 0, -25),3,Vec3(.65,.77,.97),0);
     objects.push_back(sphere_four);
+    Sphere sphere_five(Vec3(5, -1, -15),2,Vec3(.90,.76,.46),0);
     objects.push_back(sphere_five);
     cout<<objects.size()<<endl;
-    RenderContext rc(640,480,60,objects,light_source_one);
+    RenderContext rc(1920,1080,60,objects,light_source_one);
     render(rc);
 
     cout<<"Hello me!"<<endl;

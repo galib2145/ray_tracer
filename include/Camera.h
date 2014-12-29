@@ -10,5 +10,20 @@ class Camera
             fov_angle_in_degree = (fov_angle * M_PI)/180;
             fov_range = tan(fov_angle_in_degree/2);
         }
+
+        void rotate_x(float angle){
+            world_to_camera_matrix.rotateX(angle);
+            camera_to_world_matrix = world_to_camera_matrix.get_inverse();
+        }
+
+        void rotate_y(float angle){
+            world_to_camera_matrix.rotateY(angle);
+            camera_to_world_matrix = world_to_camera_matrix.get_inverse();
+        }
+
+        void rotate_z(float angle){
+            world_to_camera_matrix.rotateZ(angle);
+            camera_to_world_matrix = world_to_camera_matrix.get_inverse();
+        }
 };
 
