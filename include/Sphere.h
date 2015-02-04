@@ -27,6 +27,10 @@ class Sphere : public Object
             return true;
         }
 
+        Vec3 get_normal_at_point(Vec3 point){
+            return point - center;
+        }
+
         void print(){
             cout<<"radius : "<<radius<<endl;
         }

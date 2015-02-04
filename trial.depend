@@ -61,7 +61,7 @@
 
 1419245299 /home/galib/Downloads/trial/include/Camera.h
 
-1419759544 source:/home/galib/Downloads/ray_tracer/main.cpp
+1421734120 source:/home/galib/Downloads/ray_tracer/main.cpp
 	<iostream>
 	<cstring>
 	<Vec3.h>
@@ -86,10 +86,10 @@
 	<limits>
 	<iostream>
 
-1419750677 /home/galib/Downloads/ray_tracer/include/Object.h
+1421298111 /home/galib/Downloads/ray_tracer/include/Object.h
 	<stdlib.h>
 
-1419750677 /home/galib/Downloads/ray_tracer/include/Sphere.h
+1419831663 /home/galib/Downloads/ray_tracer/include/Sphere.h
 
 1419494514 /home/galib/Downloads/ray_tracer/include/Camera.h
 
