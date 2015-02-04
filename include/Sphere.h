@@ -28,7 +28,9 @@ class Sphere : public Object
         }
 
         Vec3 get_normal_at_point(Vec3 point){
-            return point - center;
+            Vec3 normal = (point - center);
+            normal.normalize();
+            return normal;
         }
 
         void print(){
