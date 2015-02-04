@@ -50,6 +50,10 @@ public:
     }
 };
 
+float mix(float a, float b, float mix){
+    return b * mix + a * (float(1) - mix);
+}
+
 Vec3 trace(vector<Object*> objects, vector<Light_source> light_sources, Ray ray,int depth)
 {
     Object* object_closest_hit;
@@ -75,11 +79,31 @@ Vec3 trace(vector<Object*> objects, vector<Light_source> light_sources, Ray ray,
     {
         Vec3 closest_hit_point = ray.get_point(t_closest_hit);
 
-        if(depth<MAX_RAY_DEPTH) {
+        if(depth < MAX_RAY_DEPTH)
+        {
+            Vec3 reflection_color, refraction_color;
             Vec3 normal_at_hit = object_closest_hit->get_normal_at_point(closest_hit_point);
-            Vec3 reflection_direction = (normal_at_hit * (normal_at_hit.dot(ray.direction))) * 2.0 - ray.direction;
-            Ray reflected_ray(closest_hit_point,reflection_direction);
-            Vec3 reflection_color =  trace(objects,light_sources,reflected_ray,depth+1);
+            float facing_ratio = -ray.direction.dot(normal_at_hit);
+            float fresnel_effect = mix(pow(1 - facing_ratio, 3), 1, 0.1);
+
+            if(object_closest_hit->reflectance > 0){
+                Vec3 reflection_direction = (normal_at_hit * (normal_at_hit.dot(ray.direction))) * 2.0 - ray.direction;
+                reflection_direction.normalize();
+                Ray reflected_ray(closest_hit_point,reflection_direction);
+                Vec3 reflection_color =  trace(objects,light_sources,reflected_ray,depth+1);
+            }
+
+            if(object_closest_hit->transparency > 0){
+                float eta = (float)1)/1.1;
+                float cosi = -normal_at_hit.dot(ray.direction);
+                float k = 1 - eta * eta * (1 - cosi * cosi);
+                Vec3 refraction_direction = ray.direction * eta + normal_at_hit * (eta *  cosi - sqrt(k));
+                refraction_direction.normalize();
+                Ray refracted_ray(closest_hit_point, refraction_direction);
+                Vec3 refraction_color = tracetrace(objects, light_sources, refracted_ray, depth+1);
+            }
+
+
         }
 
         return object_closest_hit->color;
