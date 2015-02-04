@@ -4,7 +4,7 @@ class Sphere : public Object
         Vec3 center;
         float radius,radius2;
 
-        Sphere(Vec3 center, float radius, Mat4 object_to_world_matrix = Mat4::Identity) : Object(object_to_world_matrix)
+        Sphere(Vec3 center, float radius, Vec3 color, float reflective_property, Mat4 object_to_world_matrix = Mat4::Identity) : Object(object_to_world_matrix,color)
         {
             this->center = object_to_world_matrix.multiply_vector_by_matrix(center);
             this->radius = radius;
@@ -25,6 +25,14 @@ class Sphere : public Object
             if (t1 < t0) std::swap(t0, t1);
             t = (t0 < 0) ? t1 : t0;
             return true;
+        }
+
+        Vec3 get_normal_at_point(Vec3 point){
+            return point - center;
+        }
+
+        void print(){
+            cout<<"radius : "<<radius<<endl;
         }
 };
 

@@ -22,6 +22,10 @@ class Ray
             t_max = std::numeric_limits<float>::max();
         }
 
+        Vec3 get_point(float t){
+            return origin + direction*t;
+        }
+
         void print_ray(){
             cout<<endl<<"Ray data:"<<endl;
             cout<<"Origin vector:"<<endl;

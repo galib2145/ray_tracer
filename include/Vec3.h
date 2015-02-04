@@ -17,6 +17,12 @@ class Vec3
             z=0.0;
         }
 
+        Vec3(float xx){
+            x=xx;
+            y=xx;
+            z=xx;
+        }
+
         float dot(Vec3 v){
             return x*v.x + y*v.y + z*v.z;
         }
@@ -34,6 +40,20 @@ class Vec3
 
         Vec3 operator - (Vec3 operand){
             return Vec3(x-operand.x,y-operand.y,z-operand.z);
+        }
+
+        Vec3 operator + (Vec3 operand){
+            return Vec3(x+operand.x,y+operand.y,z+operand.z);
+        }
+
+        Vec3 operator * (float scalar){
+            return Vec3(x*scalar,y*scalar,z*scalar);
+        }
+
+        float get_unit_dot_product(Vec3 second_vector){
+            this->normalize();
+            second_vector.normalize();
+            return (*this).dot(second_vector);
         }
 
         void print_vector(){
