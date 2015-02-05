@@ -9,25 +9,12 @@
 #include <Sphere.h>
 #include <Camera.h>
 #include <vector>
+#include <Light_source.h>
+#include <Phong.h>
 
 #define MAX_RAY_DEPTH 5
 
 using namespace std;
-
-class Light_source
-{
-public:
-    Vec3 position;
-    Vec3 color;
-    float intensity;
-
-    Light_source(Vec3 light_position, Vec3 light_color,float light_intensity)
-    {
-        this->position = light_position;
-        this->color = light_color;
-        this->intensity = light_intensity;
-    }
-};
 
 class RenderContext
 {
@@ -78,35 +65,38 @@ Vec3 trace(vector<Object*> objects, vector<Light_source> light_sources, Ray ray,
     if(if_hit)
     {
         Vec3 closest_hit_point = ray.get_point(t_closest_hit);
+        Vec3 reflection_color = 0, refraction_color = 0;
+        Vec3 normal_at_hit = object_closest_hit->get_normal_at_point(closest_hit_point);
+        Vec3 viewing_direction =  ray.origin - closest_hit_point;
 
-        if(depth < MAX_RAY_DEPTH)
+        /*if(depth < MAX_RAY_DEPTH)
         {
-            Vec3 reflection_color, refraction_color;
             Vec3 normal_at_hit = object_closest_hit->get_normal_at_point(closest_hit_point);
             float facing_ratio = -ray.direction.dot(normal_at_hit);
             float fresnel_effect = mix(pow(1 - facing_ratio, 3), 1, 0.1);
 
-            if(object_closest_hit->reflectance > 0){
+            if(object_closest_hit->reflectance > 0) {
                 Vec3 reflection_direction = (normal_at_hit * (normal_at_hit.dot(ray.direction))) * 2.0 - ray.direction;
                 reflection_direction.normalize();
                 Ray reflected_ray(closest_hit_point,reflection_direction);
-                Vec3 reflection_color =  trace(objects,light_sources,reflected_ray,depth+1);
+                reflection_color =  trace(objects,light_sources,reflected_ray,depth+1);
             }
 
-            if(object_closest_hit->transparency > 0){
-                float eta = (float)1)/1.1;
+            if(object_closest_hit->transparency > 0) {
+                float eta = 1.1;
                 float cosi = -normal_at_hit.dot(ray.direction);
                 float k = 1 - eta * eta * (1 - cosi * cosi);
                 Vec3 refraction_direction = ray.direction * eta + normal_at_hit * (eta *  cosi - sqrt(k));
                 refraction_direction.normalize();
                 Ray refracted_ray(closest_hit_point, refraction_direction);
-                Vec3 refraction_color = tracetrace(objects, light_sources, refracted_ray, depth+1);
+                refraction_color = trace(objects, light_sources, refracted_ray, depth+1);
             }
 
+        }*/
 
-        }
+        Vec3 phong_color = find_phong_illumination(object_closest_hit,objects,closest_hit_point,viewing_direction,normal_at_hit, light_sources);
+        return phong_color;
 
-        return object_closest_hit->color;
     }
 
     return 0;
@@ -157,7 +147,7 @@ int main()
     light_sources.push_back(light_source_one);
     Light_source light_source_two = Light_source(Vec3(-10,10,10),Vec3(1,0,0),.2);
     light_sources.push_back(light_source_two);
-    Light_source light_source_three = Light_source(Vec3(-100,30,-5),Vec3(1,0,0),.5);
+    Light_source light_source_three = Light_source(Vec3(-100,30,-5),Vec3(1,0,0),.2);
     light_sources.push_back(light_source_three);
 
     Sphere sphere_two(Vec3(0, 0, -20),4,Vec3(1,.32,.36),0);
@@ -177,4 +167,3 @@ int main()
     cin.get();
     return 0;
 }
-

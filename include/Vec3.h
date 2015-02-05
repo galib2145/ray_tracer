@@ -42,12 +42,20 @@ class Vec3
             return Vec3(x-operand.x,y-operand.y,z-operand.z);
         }
 
+         Vec3 operator / (Vec3 operand){
+            return Vec3(x/operand.x,y/operand.y,z/operand.z);
+        }
+
         Vec3 operator + (Vec3 operand){
             return Vec3(x+operand.x,y+operand.y,z+operand.z);
         }
 
         Vec3 operator * (float scalar){
             return Vec3(x*scalar,y*scalar,z*scalar);
+        }
+
+        Vec3 operator * (Vec3 v){
+            return Vec3(x*v.x,y*v.y,z*v.z);
         }
 
         float get_unit_dot_product(Vec3 second_vector){

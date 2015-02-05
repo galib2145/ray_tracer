@@ -125,3 +125,41 @@
 
 1423007631 /home/galib2145/graphics/ray_tracer/include/Camera.h
 
+1423131660 source:/home/galib/graphics/ray_tracer/main.cpp
+	<iostream>
+	<cstring>
+	<Vec3.h>
+	<cmath>
+	<Mat4.h>
+	<Ray.h>
+	<fstream>
+	<Object.h>
+	<Sphere.h>
+	<Camera.h>
+	<vector>
+	<Light_source.h>
+	<Phong.h>
+
+1423132358 /home/galib/graphics/ray_tracer/include/Vec3.h
+	<iostream>
+	<cmath>
+
+1423114386 /home/galib/graphics/ray_tracer/include/Mat4.h
+	<iostream>
+	<math.h>
+
+1423114386 /home/galib/graphics/ray_tracer/include/Ray.h
+	<limits>
+	<iostream>
+
+1423114386 /home/galib/graphics/ray_tracer/include/Object.h
+	<stdlib.h>
+
+1423114386 /home/galib/graphics/ray_tracer/include/Sphere.h
+
+1423114386 /home/galib/graphics/ray_tracer/include/Camera.h
+
+1423129837 /home/galib/graphics/ray_tracer/include/Light_source.h
+
+1423133138 /home/galib/graphics/ray_tracer/include/Phong.h
+
